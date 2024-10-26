@@ -697,20 +697,426 @@ print(flag)
 
 ### 2.6 NSS茶馆！
 
+首先先跑一下看看是怎么运行的
+
+一开始对着图片按1和2都莫得反应，后来看了下源码，用了kbhit()
+
+这个函数通常用于实现基于控制台的交互式程序，于是跑去看控制台了
+
+终于搞明白了用法。
+
+按1会让你输入flag，按2会给一个假flag。也就是说1后面可能有flag校验
+
+断点单步到1的流程里，会先构造一个输入框，然后就是下面的核心函数了
+
 ![](../images/2024-10-25-18-11-19-image.png)
 
+第一行的sub_411BB3会调到这里来
+
+![](../images/2024-10-26-08-57-46-image.png)
+
+相当于把每个字符转换成十六进制，4个十六进制排成一个字符串，再一把转成数字
+
+```cpp
+void processString(const char* Str, unsigned int* may_input) {
+    char Buffer[INPUT_LEN] = {0};
+    for (int i = 0; i < strlen(Str) / 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            sprintf(Buffer+2*j, "%02x", Str[4 * i + j]);
+            may_input[i] = strtol(Buffer, nullptr, 16);
+            printf("%d|%s=%c|%d ",i, Buffer, Str[4 * i + j], 4 * i + j);
+        }
+    }
+    printf("\n");
+}
+```
+
+顺便写一个逆向，这个时候还不知道input的长度，定义了一个宏，之后好改
+
+```cpp
+void processStringre(char* Str, size_t* input) {
+    for (size_t i = 0; i < INPUT_LEN; i++) {
+        for (int j = 0; j < 4; j++) {
+            Str[i * 4 + 3 - j] = (char)((input[i] >> (j * 8)) & 0xFF);
+        }
+    }
+}
+```
+
+自己创建数据校验了一下，没有问题就继续了
+
+接下来的循环里的函数，循环是6，说明input大小是6。INPUT_LEN定义为7。
+
+循环内接下来会调用：
+
+![](../images/2024-10-26-09-12-33-image.png)
+
+可以直接送去gpt转换一下，大概是通过a1=输入input指针一次性对连续的两个数做操作
+
+a2是固定的，这个函数里的循环内的v4也是固定的，可以直接做成数组使用，方便逆向
+
+直接放代码：
+
+```cpp
+int v4[34] = {1131796, 2263592, 3395388, 4527184, 5658980, 6790776, 7922572, 9054368, 10186164, 11317960, 12449756, 13581552, 14713348
+        , 15845144, 16976940, 18108736, 19240532, 20372328, 21504124, 22635920, 23767716, 24899512, 26031308, 27163104, 28294900
+        , 29426696, 30558492, 31690288, 32822084, 33953880, 35085676, 36217472, 37349268};
+
+void may_encode(unsigned int *a1) {
+    const unsigned int a2[] = {0x0B, 0x16, 0x21, 0x2C};
+    unsigned int v6= a1[0];
+    unsigned int v5 = a1[1];
+    printf("[%p]: %x %x\n", a1, a1[0], a1[1]);
+
+    for (int i = 0; i < 33; ++i) {
+        //v4 += 1131796;
+        v6 += (a2[1] + (v5 >> 5)) ^ (v4[i] + v5) ^ (a2[0] + 16 * v5);
+        v5 += (a2[3] + (v6 >> 5)) ^ (v4[i] + v6) ^ (a2[2] + 16 * v6);
+        //printf("%d, ", v4);
+    }
+    //printf("\n");
+    a1[0] = v6;
+    a1[1] = v5;
+}
+void may_decode(unsigned int *a1) {
+    const unsigned int a2[] = {0x0B, 0x16, 0x21, 0x2C};
+    unsigned int v6 = a1[0];
+    unsigned int v5 = a1[1];
+
+    for (int i = 32; i >= 0 ; i--) {
+        //v4 += 1131796;
+        v5 -= (a2[3] + (v6 >> 5)) ^ (v4[i] + v6) ^ (a2[2] + 16 * v6);
+        v6 -= (a2[1] + (v5 >> 5)) ^ (v4[i] + v5) ^ (a2[0] + 16 * v5);
+    }
+
+    a1[0] = v6;
+    a1[1] = v5;
+}
+```
+
+最后就是校验了，dword_42E010是固定的但是格式不太对
+
+IDA没有转换成4个十六进制一组的数字的排列，而是把每个十六进制单独放
+
+还要自己转一下
+
+不过最准确的是直接看动态调试的内存啦
+
 ![](../images/2024-10-25-18-10-43-image.png)
+
+```cpp
+//unsigned int check[] = {0x3A26D265, 0xB6A0D981, 0x2A005E0E, 0xE5EF0739, 0x57BCB671, 0xA20DACE0};
+unsigned int check[] = {0x3A26D265, 0x81D9A0B6, 0x0E5E002A, 0X3907EFE5, 0x71B6BC57, 0xE0AC0DA2};
+```
+
+到这里就可以全部逆向了
+
+```cpp
+int main() {
+    unsigned int input[INPUT_LEN] = {0};
+    char flag[INPUT_LEN*4] = {};
+    for (int i = 0; i < 6; i += 2 ) {
+        may_decode(&check[i]);
+    }
+    for(int i = 0; i < INPUT_LEN; i++){
+        printf("%x, ", check[i]);
+    }
+    printf("\n");
+    processStringre(flag, check);
+    std::cout<<flag<<std::endl;
+    return 0;
+}
+```
+
+![](../images/2024-10-26-09-22-40-image.png)
 
 ## 3 卡住&没做完
 
 ### 3.1 Reverse_or_Pwn
 
+一道微妙的题，做到最后卡住了。去和前面那个微妙的py题出题人问了一下，还是他出的。就聊了一下，本质上还是多解的，但这个，我觉得可以理解吧
+
+以后这种题还是要多想想（）
+
+输入是一个字符串和一个数字
+
+先看代码，一开始那个数字用z3没解出来，就先强制跳转了
+
 ![](../images/2024-10-25-15-02-07-image.png)
+
+字符串好解，init()里面是一个固定种子的随机数，自己跑没跑出来，直接拿内存里的用了
+
+v7 = 字符串a1 ^ v3，直接逆向就好了
+
+代码如下：
+
+```cpp
+int v3[] = {0x2E, 0x0D, 0x1E, 0x17, 0x03, 0x4F, 0x2C, 0x02,
+        0x61, 0x41, 0x53, 0x57, 0x1E, 0x21, 0x57, 0x44};
+int v7[] = {122, 101, 119, 100, 92, 38, 95, 93, 19, 36, 32, 50, 108, 87, 50, 123};
+char a1[17] = {0};
+for (int  i = 0; i <= 15; ++i ) {
+    //v7[i] = a1[i] ^ v3[i];
+    a1[i] = v7[i] ^ v3[i];
+    printf("[%d] %c = %d ^ %d\n", i, a1[i], v7[i], v3[i]);
+}
+```
+
+代码调用到这里，又调一个下面的fun1就结束了。这时候不太理解func1是做什么的
 
 ![](../images/2024-10-25-15-03-33-image.png)
 
+但是发现代码里有完全没被用到却存在的函数？看起来还很重要
+
+是从字符串搜索定位过来的，因为这个aWoW字符串说了拿到flag了
+
+在这个位置：
+
 ![](../images/2024-10-25-15-03-47-image.png)
+
+反编译一下
 
 ![](../images/2024-10-25-15-02-18-image.png)
 
+最开始直接改exe，直接跳转过来
+
+大概就是输入一下字符串，通过下面的函数换表，然后base64
+
+> 理解换表，里面第一题：
+> 
+> [[原创]MRCTF2021逆向题解-CTF对抗-看雪-安全社区|安全招聘|kanxue.com](https://bbs.kanxue.com/thread-267013-1.htm)
+
 ![](../images/2024-10-25-15-03-13-image.png)
+
+```cpp
+void shift_base64_table(int shift)
+{
+    for (int i = 0; i <= 63; ++i )
+        base64_table[(shift + i) % 64] = base64_chars[i];
+    base64_table[64] = 0;
+    for (int i = 0; i <= 64; ++i )
+        base64_chars[i] = base64_table[i];
+}
+
+void funbase64(char *input2) {
+    for (int i = 0; i <= 8; i += 2 ) {
+        shift_base64_table(i);
+        char *encoded = base64_encode(input2, base64_table);
+        for (int j = 0; j < strlen(encoded); ++j ){
+            input2[j] = encoded[j];
+        }
+    }
+    //input2 = output
+}
+```
+
+可以通过这个函数生成要换的所有表，存一下，然后写逆向
+
+```cpp
+char base64_tables[][65] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
+                           "+/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+                           "6789+/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345",
+                           "0123456789+/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+                           "stuvwxyz0123456789+/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqr"};
+```
+
+感觉base64的加密解密可能会经常用，存成文件了
+
+```cpp
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+#include <cstdint>
+
+
+char* base64_encode(const char* str, const char *base64_table) {
+    int str_len = strlen(str);
+    int len = (str_len % 3) ? 4 * (str_len / 3 + 1) : 4 * (str_len / 3);
+    char* res = static_cast<char*>(malloc(len + 1));
+    if (!res){
+        std::cout<< "base64_encode Error!" <<std::endl;
+        return nullptr;
+    }
+
+
+    int i = 0;
+    for (int j = 0; j < str_len; j += 3) {
+        res[i] = base64_table[static_cast<unsigned char>(str[j]) >> 2];
+        res[i + 1] = base64_table[((static_cast<unsigned char>(str[j]) & 3) << 4) | (static_cast<unsigned char>(str[j + 1]) >> 4)];
+        res[i + 2] = base64_table[((static_cast<unsigned char>(str[j + 1]) & 0xF) << 2) | (static_cast<unsigned char>(str[j + 2]) >> 6)];
+        res[i + 3] = base64_table[static_cast<unsigned char>(str[j + 2]) & 0x3F];
+        i += 4;
+    }
+
+    if (str_len % 3 == 1) {
+        res[i - 2] = '=';
+        res[i - 1] = '=';
+    } else if (str_len % 3 == 2) {
+        res[i - 1] = '=';
+    }
+
+    res[len] = '\0';
+    return res;
+}
+
+char* base64_decode(const char* input, const char *base64_table) {
+    int input_len = strlen(input);
+    // 检查输入长度是否为4 的倍数
+    //assert((input_len % 4) == 0);
+
+    int output_len = (input_len * 3) / 4;
+    char* output = static_cast<char*>(malloc(output_len + 1));
+    if (!output)
+        return nullptr;
+
+    int j = 0;
+    for (int i = 0; i < input_len; i += 4) {
+        uint8_t quad[4];
+        for (int k = 0; k < 4; k++) {
+            // 查找 base64 表中每个字符的十进制值
+            for (int m = 0; base64_table[m]; m++) {
+                if (input[i + k] == base64_table[m]) {
+                    quad[k] = static_cast<uint8_t>(m);
+                    break;
+                }
+            }
+        }
+
+        // 检查第一个和第二个字符是否有效
+        //assert(quad[0] < 64 && quad[1] < 64);
+
+        // 解码第一个字节
+        output[j++] = static_cast<char>((quad[0] << 2) | (quad[1] >> 4));
+
+        // 如果第三个字符不是 '='，则解码第二个字节
+        if (quad[2] < 64) {
+            output[j++] = static_cast<char>((quad[1] << 4) | (quad[2] >> 2));
+
+            // 如果第四个字符不是 '='，则解码第三个字节
+            if (quad[3] < 64) {
+                output[j++] = static_cast<char>((quad[2] << 6) | quad[3]);
+            }
+        }
+    }
+
+    output[output_len] = '\0';
+    return output;
+}
+```
+
+然后就可以写这个函数的逆向：
+
+```cpp
+void funbase64re(char *res) {
+    for (int i = 8; i >= 0; i-=2) {
+        char *decoded = base64_decode(res, base64_tables[i/2]);
+        std::cout<< strlen(res) <<" "<< strlen(decoded) <<std::endl;
+        for (int j = 0; j < strlen(decoded); ++j ){
+            res[j] = decoded[j];
+            res[j+1] = 0;
+        }
+    }
+}
+```
+
+还需要拿一下output，我记得这个地方没什么坑
+
+这里看IDA看到xxx0_0就是flag，但是这里只赋值了19~42，因此前面的信息估计就是放在flag前面的，可是这样还差了16，17，18？于是只好去解那个数字
+
+```cpp
+char xxx0_0[44] = {};
+char output[] = "+/1k6wlc+QFy5zN1+BVC3gVDKwx25zMd/CxU+glG4A925QVd+QRY4AQjBQF6+QFW+/J2GB5FASpuIvwb/Clu9AR1KwByCRRW/Qch+ANO+DM=";funbase64re(output);
+std::cout<< "output : "<< output <<std::endl;
+//0~15 16 17 18 19~42
+for (int i = 19; i <= 42; ++i){
+    xxx0_0[i] = output[i - 19];
+}
+```
+
+s![](../images/2024-10-26-09-49-17-image.png)
+
+解数字发现，IDA写算式写不明白，一些手动对照后
+
+等一下？好像也没改啊？为什么之前不行后来行了，怀疑人生x
+
+```cpp
+int v16 = v9 / 10000; //<=999
+int v15 = (v9 % 10000) / 100; // <=9 22
+int v14 = v9 % 100; // >9 22
+int v13 = 5 * v15 + 114464; //<=99 5 * v15 + 114514 + 16  - 66 144574
+int v12 = v9 + 114514 + 176 * (v15 + v14 - 3) - 66; //奇数 v9 + 114514 + 16 * 11 * (v15 + v14 - 3) - 66 //123886
+int v11 = (v12 - 16 * v16) + v14 * v13; //21241824
+printf("v9=%x v12=%x v13=%x v14=%x v15=%x v16=%d v11=%d\n", v9, v12, v13, v14, v15, v16, v11);
+```
+
+算了不管了，放一下Python的z3
+
+```python
+from z3 import *
+
+# 创建 Z3 变量
+v9 = Int('v9')
+v12 = Int('v12')
+v13 = Int('v13')
+v14 = Int('v14')
+v15 = Int('v15')
+v16 = Int('v16')
+# 创建约束
+s = Solver()
+#s.add(v16 <= 999)
+s.add(v16 == v9 / 10000)
+s.add(v15 == v9 % 10000 / 100)
+#s.add(v15 <= 9)
+s.add(v14 == v9 % 100)
+s.add(v14 <= 9)
+#s.add(v13 <= 99)
+s.add(v13 == 5 * v15 + 114514 + 16 - 66)
+s.add(v12 == v9 + 114514 + 16 * 11 * (v15 + v14 - 3) - 66)
+s.add(21241824 == v12 - 16 * v16 + v14 * v13)
+#s.add(v12 % 2 != 0)
+
+# 求解
+if s.check() == sat:
+    model = s.model()
+    print("解为:")
+    num9 = model[v9].as_long()  # 将 Z3 数值转换为十进制字符串
+    print(f'v9 = {num9}')  # 打印数值
+else:
+    print("没有找到可行解")
+```
+
+总之就解出来数字是20241008
+
+![](../images/2024-10-26-09-48-54-image.png)
+
+于是就是怎么组合的问题了，仔细看了一下
+
+![](../images/2024-10-25-15-03-33-image.png)
+
+发现这里有一个栈溢出，a1受我们控制，而且可以输入300个字符，end只有12位
+
+或者说我们输入16位的字符串就是在溢出了
+
+12 + 4已经覆盖了ebp，那么再往后写4个就是ret了
+
+那个未被调用的函数是00402463调用的，构造一下
+
+![](../images/2024-10-26-09-53-42-image.png)
+
+![](../images/2024-10-26-09-54-04-image.png)
+
+于是觉得这个肯定是对的，去提交了flag，还是不对
+
+怀疑人生了（
+
+和出题人聊了一下，栈溢出的地址是不唯一的！好吧
+
+其实就是地址偏移一位，是下面那个（）
+
+![](../images/2024-10-26-09-55-27-image.png)
+
+微妙（）
+
+### 3.2 md5也能爆破？
+
+还没做，以后做了再说
