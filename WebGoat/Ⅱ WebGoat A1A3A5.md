@@ -16,91 +16,91 @@
 一直发的时候，前面在递增递增着会突然跳一位，可能是在模拟有实际用户登录成功了
 这时候我们发现跳位后就可以用跳位的和上一次的时间戳登录了
 
-![[../images/Pasted image 20241112115442.png]]
+![](../images/Pasted%20image%2020241112115442.png)
 
 ### 1.2 不安全的直接对象引用
 
 登录Tom
 
 抓包
-![[../images/Pasted image 20241113163956.png]]
+![](../images/Pasted%20image%2020241113163956.png)
 
 输入`role, userId`
-![[../images/Pasted image 20241113163932.png]]
+![](../images/Pasted%20image%2020241113163932.png)
 
 
 下一题：在 RESTful API 设计中，访问用户个人资料的方式通常遵循一定的模式。根据你提供的信息，应用程序似乎允许用户查看自己的个人资料，但在某些情况下，可能需要明确指定要查看的用户资料，尤其是在存在角色和权限的情况下。以下是对如何通过直接对象引用来查看自己的个人资料的分析
-![[../images/Pasted image 20241113171006.png]]
+![](../images/Pasted%20image%2020241113171006.png)
 
 上一题url是`/WebGoat/IDOR/profile`，Tom的userid是`2342384`
 组合一下
-![[../images/Pasted image 20241113171151.png]]
-![[../images/Pasted image 20241113171138.png]]
+![](../images/Pasted%20image%2020241113171151.png)
+![](../images/Pasted%20image%2020241113171138.png)
 放在框里，记得不要写第一个`/`
 答案是`WebGoat/IDOR/profile/2342384`
 
 找其他人的信息，id为`2342388`
-![[../images/Pasted image 20241113172708.png]]
-![[../images/Pasted image 20241113172347.png]]
+![](../images/Pasted%20image%2020241113172708.png)
+![](../images/Pasted%20image%2020241113172347.png)
 这时候这单课程绿了，但是左边栏的课程没绿
 
 然后要修改颜色
 根据后文推测修改的应该用PUT
-![[../images/Pasted image 20241113174644.png]]
+![](../images/Pasted%20image%2020241113174644.png)
 一开始用原装的头发过去，会报错`Unsupported Media Type`
-![[../images/Pasted image 20241113174751.png]]
+![](../images/Pasted%20image%2020241113174751.png)
 一看到这个解释就明白肯定是json了，因为之前展示信息都是Json格式的
 json要写全
-![[../images/Pasted image 20241113173931.png]]
-![[../images/Pasted image 20241113174919.png]]
+![](../images/Pasted%20image%2020241113173931.png)
+![](../images/Pasted%20image%2020241113174919.png)
 还可以再改回来0v0
 哦还要改权限为较低的
-![[../images/Pasted image 20241113175123.png]]
+![](../images/Pasted%20image%2020241113175123.png)
 
 这样就都绿了！
 
 ### 1.3  缺少功能级别访问控制
 
 隐藏菜单
-![[../images/Pasted image 20241113175611.png]]
-![[../images/Pasted image 20241113180156.png]]
+![](../images/Pasted%20image%2020241113175611.png)
+![](../images/Pasted%20image%2020241113180156.png)
 顺序还要一致必须是`Users`，`Config`
 
 下一题，提交一下看看
-![[../images/Pasted image 20241114091049.png]]
+![](../images/Pasted%20image%2020241114091049.png)
 这个Url看起来和上面的很像
 于是试一下`GET /WebGoat/access-control/users`
-![[../images/Pasted image 20241114092202.png]]
+![](../images/Pasted%20image%2020241114092202.png)
 注意这里有一个问题
-![[DJGGTWTC$J~JB8XC2C2N72I.png]]
+![](DJGGTWTC$J~JB8XC2C2N72I.png)
 如果这样下面没有两行空格，就不能收到回复
 
 想到能不能修改自己的权限为admin
-![[../images/Pasted image 20241114093112.png]]
+![](../images/Pasted%20image%2020241114093112.png)
 报错搜一下，很明确的提示，应该是单个的对象
-![[../images/Pasted image 20241114093231.png]]
+![](../images/Pasted%20image%2020241114093231.png)
 
 修改Tom的权限
-![[../images/Pasted image 20241114093142.png]]
+![](../images/Pasted%20image%2020241114093142.png)
 
 卡住了，用原来的搜了一下，发现居然是添加
-![[../images/Pasted image 20241114093910.png]]
+![](../images/Pasted%20image%2020241114093910.png)
 于是想到自己的username是testtest，添加了用户
-![[../images/Pasted image 20241114094013.png]]
+![](../images/Pasted%20image%2020241114094013.png)
 OK
-![[../images/Pasted image 20241114094043.png]]
+![](../images/Pasted%20image%2020241114094043.png)
 
 ### 1.4 欺骗身份验证 Cookie
 
 登陆一下试试
-![[../images/Pasted image 20241114094211.png]]
+![](../images/Pasted%20image%2020241114094211.png)
 
 拿了好几次都是这个值，应该是固定的
-![[../images/Pasted image 20241114094901.png]]
-![[../images/Pasted image 20241114095041.png]]
-![[../images/Pasted image 20241114095148.png]]
+![](../images/Pasted%20image%2020241114094901.png)
+![](../images/Pasted%20image%2020241114095041.png)
+![](../images/Pasted%20image%2020241114095148.png)
 使用这个作为cookie看一下
-![[../images/Pasted image 20241114095348.png]]
+![](../images/Pasted%20image%2020241114095348.png)
 
 要偶数个字符，Tom后面补位00？
 竟然还有一个用户案例，之前没看到转换一下看看
@@ -110,22 +110,22 @@ OK
 
 原来是Base64解码弄错了
 用kali输出还是太危险了，竟然是输入有换行符这合理吗
-![[../images/Pasted image 20241114103209.png]]
+![](../images/Pasted%20image%2020241114103209.png)
 
 总之需要加密的应该是
-![[../images/Pasted image 20241114104057.png]]
+![](../images/Pasted%20image%2020241114104057.png)
 OK， `NGE3YTZhNjk3OTY1NTc2ZjQxNzQ2ZDZmNTQ=`
-![[../images/Pasted image 20241114104148.png]]
+![](../images/Pasted%20image%2020241114104148.png)
 ## 2 SQL
 
 旧版本：从(A1)的第二栏开始，前面的在文档（一）
 新版本：在A3
-![[../images/Pasted image 20241114111344.png]]
+![](../images/Pasted%20image%2020241114111344.png)
 ### 1.1 联表查询
 
 > [!note] 
 > 补充：可以查看提示！
-> ![[../images/Pasted image 20241111090721.png]]
+> ![](../images/Pasted%20image%2020241111090721.png)
 
 直接增加select语句
 
@@ -156,10 +156,10 @@ SELECT name FROM employees UNION SELECT name FROM contractors;
 
 新版本：
 表格都和之前完全不一样了（）
-![[../images/Pasted image 20241114111802.png]]
+![](../images/Pasted%20image%2020241114111802.png)
 这里也没有Dave啊？
 不好意思题目没有变化，这是两个表（）
-![[../images/Pasted image 20241114112133.png]]
+![](../images/Pasted%20image%2020241114112133.png)
 
 ### 1.2 盲注
 
@@ -281,17 +281,17 @@ ok，但tom小写我是不理解的（
 ![](../images/2024-11-06-15-40-20-image.png)
 
 好好好新版本的攻击问答题又来了
-![[../images/Pasted image 20241114112315.png]]
+![](../images/Pasted%20image%2020241114112315.png)
 和上次一样
-![[../images/Pasted image 20241114112526.png]]
+![](../images/Pasted%20image%2020241114112526.png)
 
 > [!note] 
 >  
 可恶为什么没绿
-![[../images/Pasted image 20241114112655.png]]
+![](../images/Pasted%20image%2020241114112655.png)
 难道是哪里跳过步骤了
 幸好之前的repeat没删，改了一下端口号和cookie重发了，就绿了
-![[../images/Pasted image 20241114113040.png]]
+![](../images/Pasted%20image%2020241114113040.png)
 
 ### 1.4 开发语句填充
 
@@ -383,10 +383,10 @@ public class DatabaseExample {
 ```
 
 填一下
-![[../images/Pasted image 20241111092826.png]]
+![](../images/Pasted%20image%2020241111092826.png)
 
 下一题也一样只是全都自己写
-![[../images/Pasted image 20241111093623.png]]
+![](../images/Pasted%20image%2020241111093623.png)
 （新版本吐槽，为什么当时没拷贝出来，还要重新打）
 
 ```java
@@ -406,7 +406,7 @@ try {
 > https://github.com/WebGoat/WebGoat/issues/1544
 > 新版本也有问题！ 
 > 错误没截图，大概是这样的
-> ![[../images/Pasted image 20241114143610.png]]
+> ![](../images/Pasted%20image%2020241114143610.png)
 > 很明显不对劲
 > 网上这个的方案是重新构建，但是重新构建？我的记录没了！
 > 如果重新拿现在的容器做image由很怪
@@ -452,8 +452,8 @@ ln -s /usr/lib/jvm/java-21-openjdk-amd64 /opt/java/openjdk
 
 之后重启一下docker
 ok 没有哪个编译器Null了
-![[../images/Pasted image 20241114143351.png]]
-![[../images/Pasted image 20241114145844.png]]
+![](../images/Pasted%20image%2020241114143351.png)
+![](../images/Pasted%20image%2020241114145844.png)
 
 ### 1.5 输入验证-替换空格关键字注入
 
@@ -464,25 +464,25 @@ ok 没有哪个编译器Null了
 用注释`/**/`替换空格：`Dave';Select/**/*/**/from/**/user_system_data/**/where/**/'1'='1`
 用括号减少空格：`Dave';Select(*)from/**/user_system_data/**/where('1'='1')--`
 from后面的表无法用括号，只能继续用注释
-![[../images/Pasted image 20241111100653.png]]
+![](../images/Pasted%20image%2020241111100653.png)
 
 > [!question] 
 > 这里产生了疑惑，之前参考的网站说这个是参数化查询所以不能带空格
 > 按照之前的讲解，参数化查询就是使用PreparedStatement
 > 但我测试PreparedStatement的代码发现这里能注入的方案，也无法查询
 > 于是翻了一下jar包的源码
-> ![[../images/Pasted image 20241111111901.png]] 
-> ![[../images/Pasted image 20241111112801.png]]
+> ![](../images/Pasted%20image%2020241111111901.png) 
+> ![](../images/Pasted%20image%2020241111112801.png)
 > 只是对输入进行了空格匹配emmmmm看起来和PreparedStatement没有关系
 > 重新搜索了一下
-> ![[../images/Pasted image 20241111112931.png]]
+> ![](../images/Pasted%20image%2020241111112931.png)
 > 总之这里不是参数化查询
 
 下面的课程是替换关键字，可以双写
 `Dave';SESelectLECT(*)FRfromOM/**/user_system_data/**/where('1'='1')--`
 
 可以直接看一下源码
-![[../images/Pasted image 20241111113408.png]]
+![](../images/Pasted%20image%2020241111113408.png)
 
 除了双写想再用select比较困难，但可以换语句
 `Dave';Table/**/user_system_data--`
@@ -494,7 +494,7 @@ from后面的表无法用括号，只能继续用注释
 
 利用排序抓到包，随便改一下column的参数
 报错中发现查询语句内容
-![[../images/Pasted image 20241111135848.png]]
+![](../images/Pasted%20image%2020241111135848.png)
 
 `select id, hostname, ip, mac, status, description from servers where status <> 'out of order' order by true`
 从数据库中选择所有状态不为 `'out of order'` 的记录，并尝试按 `true` 进行排序。
@@ -505,19 +505,19 @@ from后面的表无法用括号，只能继续用注释
 > https://github.com/aleenzz/MYSQL_SQL_BYPASS_WIKI/blob/master/1-11-order%2Climit%E5%92%8Cfrom%E5%90%8E%E7%9A%84%E6%B3%A8%E5%85%A5.md
 
 试试if，发现不能用
-![[../images/Pasted image 20241111142618.png]]
+![](../images/Pasted%20image%2020241111142618.png)
 报错也不行
-![[../images/Pasted image 20241111142719.png]]
+![](../images/Pasted%20image%2020241111142719.png)
 这个参考都不能用
 
 看了别人的，这个地方上一页其实讲了
-![[../images/Pasted image 20241111144249.png]]
+![](../images/Pasted%20image%2020241111144249.png)
 但好像少写了END
 `(CASE+WHEN+(true)+THEN+1+ELSE+2+end)`
-![[../images/Pasted image 20241111144358.png]]
+![](../images/Pasted%20image%2020241111144358.png)
 `(CASE+WHEN+(substr('2222',1,1)='1')+THEN+1+ELSE+2+end)`应该输出按照Hostname排序的但是没有变化
 很奇怪，最后还是把1和2改成列名了，必须通过修改
-![[../images/Pasted image 20241111153416.png]]
+![](../images/Pasted%20image%2020241111153416.png)
 这样才对 `(CASE+WHEN+(substr('2222',1,1)='1')+THEN+id+ELSE+hostname+end)`
 那就可以盲注了
 
@@ -527,19 +527,19 @@ string字符串是：`(select ip from servers where hostname=‘webgoat-prd’)
 >  Burpsuite拷贝过去后会吞掉中文字符，看起来就是引号消失了，自己补充一下引号其实会变成下面的状态
 > (CASE+WHEN+(substr((select+ip+from+servers+where+hostname='webgoat-prd'),1,1)='1')+THEN+id+ELSE+hostname+end)
 > 但是页面看不到乱码！！！！
->  ![[../images/Pasted image 20241111154052.png]]
+>  ![](../images/Pasted%20image%2020241111154052.png)
 
 string字符串是：`(select ip from servers where hostname='webgoat-prd')
 substr的第2个参数是递增整个字符串的，已知后面3段，我们大概要猜3个字符
 作为ip地址的第一位大概率是`'1'`
 `(CASE+WHEN+(substr((select+ip+from+servers+where+hostname='webgoat-prd'),1,1)='1')+THEN+id+ELSE+hostname+end)`
-![[../images/Pasted image 20241111154630.png]]
+![](../images/Pasted%20image%2020241111154630.png)
 
 还要搞2位，分别为0~9
 第2位是0
-![[../images/Pasted image 20241111154752.png]]
+![](../images/Pasted%20image%2020241111154752.png)
 第3位是4
-![[../images/Pasted image 20241111154838.png]]
+![](../images/Pasted%20image%2020241111154838.png)
 
 也就是 `104.130.219.202`，成功！
 
@@ -548,22 +548,22 @@ substr的第2个参数是递增整个字符串的，已知后面3段，我们大
 本来想放在上一章，dbq我不配，我不会做（）
 ### 3.1 简单XSS
 
-![[../images/Pasted image 20241114153457.png]]
+![](../images/Pasted%20image%2020241114153457.png)
 
 直接确定就可以，jsessionid是一样的
-![[../images/Pasted image 20241114153415.png]]
+![](../images/Pasted%20image%2020241114153415.png)
 
 只要随便输出点什么就行
 `<script>alert('XSS')</script>`
-![[../images/Pasted image 20241114154316.png]]
+![](../images/Pasted%20image%2020241114154316.png)
 
 ### 3.2 DOM-Based XSS
 
 似乎和路由有关系，看来其他题解了解有一个`GoatRouter.js`文件
-![[../images/Pasted image 20241114155051.png]]
-![[../images/Pasted image 20241114155029.png]]
+![](../images/Pasted%20image%2020241114155051.png)
+![](../images/Pasted%20image%2020241114155029.png)
 题目是
-![[../images/Pasted image 20241114155208.png]]
+![](../images/Pasted%20image%2020241114155208.png)
 测试代码？
 
 我理解是要拼接一个url，来访问测试代码
@@ -574,15 +574,15 @@ substr的第2个参数是递增整个字符串的，已知后面3段，我们大
 > 插件 Google 地址：https://chrome.google.com/webstore/detail/save-all-resources/abpdnfjocnmdomablahdcfnoggeeiedb
 > 参考：https://cloud.tencent.com/developer/article/1583727
 
-![[../images/Pasted image 20241114162710.png]]
-![[../images/Pasted image 20241114162957.png]]
-![[../images/Pasted image 20241114163016.png]]
+![](../images/Pasted%20image%2020241114162710.png)
+![](../images/Pasted%20image%2020241114162957.png)
+![](../images/Pasted%20image%2020241114163016.png)
 看起来有了一点变化，但还是不理解在干嘛
-![[../images/Pasted image 20241114163340.png]]
+![](../images/Pasted%20image%2020241114163340.png)
 
 弹了？目的是构造一个url让他弹出来？
-![[../images/Pasted image 20241114163909.png]]
-![[../images/Pasted image 20241114164024.png]]
+![](../images/Pasted%20image%2020241114163909.png)
+![](../images/Pasted%20image%2020241114164024.png)
 `http://192.168.137.42:8080/WebGoat/start.mvc#test/param=%3Cscript%3Ealert(%27my%20javascript%20here%27)%3C%2Fscript%3E`
 emmmmm答案是`start.mvc#test`
 有点抽象，还是不理解
@@ -593,57 +593,57 @@ emmmmm答案是`start.mvc#test`
 第三种js文件中存在参数可以被显示出来，于是在这种能被显示的参数中参杂弹框也可以弹框
 
 下一题，似乎是以弹框类似的方式运行**webgoat.customjs.phoneHome()**
-![[../images/Pasted image 20241114165133.png]]
-![[../images/Pasted image 20241114165346.png]]
+![](../images/Pasted%20image%2020241114165133.png)
+![](../images/Pasted%20image%2020241114165346.png)
 这样看好像成功了？
 看了一下题解，就是这样的
 
 ### 3.3 问答题
 
 新版本的攻击时间
-![[../images/Pasted image 20241114165458.png]]
+![](../images/Pasted%20image%2020241114165458.png)
 但还是要看旧版本的题目
-![[../images/Pasted image 20241114170205.png]]
-![[../images/Pasted image 20241114170127.png]]
+![](../images/Pasted%20image%2020241114170205.png)
+![](../images/Pasted%20image%2020241114170127.png)
 
 新版本发包
-![[../images/Pasted image 20241114170558.png]]
+![](../images/Pasted%20image%2020241114170558.png)
 
 ### 绕过BUG 答完题不绿
 
 > [!error] 
 > 为什么不绿！！
-> ![[../images/Pasted image 20241114171032.png]] 
+> ![](../images/Pasted%20image%2020241114171032.png) 
 > 旧版本很顺畅的就绿了（）
-> ![[../images/Pasted image 20241114172353.png]]
+> ![](../images/Pasted%20image%2020241114172353.png)
 > 新版本bug https://github.com/WebGoat/WebGoat/issues/1770
 > 这合理吗？
 
 进行了一些修改，于是出现了有趣的场景()
-![[../images/Pasted image 20241114182424.png]]
+![](../images/Pasted%20image%2020241114182424.png)
 
 根据
-![[../images/Pasted image 20241114183806.png]]
-![[../images/Pasted image 20241114183829.png]]
+![](../images/Pasted%20image%2020241114183806.png)
+![](../images/Pasted%20image%2020241114183829.png)
 确定有一个实体文件叫webgoat，但没搜到
-![[../images/Pasted image 20241114183934.png]]
-![[../images/Pasted image 20241114183947.png]]
+![](../images/Pasted%20image%2020241114183934.png)
+![](../images/Pasted%20image%2020241114183947.png)
 
 也就是说
-![[../images/Pasted image 20241114184013.png]]
+![](../images/Pasted%20image%2020241114184013.png)
 这个就是数据库本身，里面是很多数据库语句我以为只是记录
 
 直接修改文件
-![[../images/Pasted image 20241114184047.png]]
+![](../images/Pasted%20image%2020241114184047.png)
 可以查询到点东西
 
 删掉过去的记录重启一下，重新答一下题再重启
 发现为什么不能绿了，有隐藏课程（）
-![[../images/Pasted image 20241114190333.png]]
+![](../images/Pasted%20image%2020241114190333.png)
 我们解决的列表里没有这两个隐藏的
-![[../images/Pasted image 20241114190447.png]]
+![](../images/Pasted%20image%2020241114190447.png)
 于是
-![[../images/Pasted image 20241114190544.png]]
+![](../images/Pasted%20image%2020241114190544.png)
 但是好像序列是默认增加的，删掉的也不会变小，可能有别的在控制，但是算了看起来能用
 
 > [!note] 
@@ -655,7 +655,7 @@ emmmmm答案是`start.mvc#test`
 ### 3.4 存储XSS
 
 添加一条评论为 `<script>webgoat.customjs.phoneHome()</script>`即可
-![[../images/Pasted image 20241114191031.png]]
+![](../images/Pasted%20image%2020241114191031.png)
 
 ### 3.5 缓解XSS
 
@@ -672,7 +672,7 @@ emmmmm答案是`start.mvc#test`
 > https://cloud.baidu.com/article/2779364
 
 最后效果
-![[../images/Pasted image 20241118102912.png]]
+![](../images/Pasted%20image%2020241118102912.png)
 
 我的实际环境中测试可以使用的代码，试图用e:forHtml一直失败，后来搜了一个import的就ok了emmmmm
 而且这个getParameter一直是红的。。。不理解web，配环境配了一天
@@ -703,7 +703,7 @@ emmmmm答案是`start.mvc#test`
 </body>
 </html>
 ```
-![[../images/Pasted image 20241118102655.png]]
+![](../images/Pasted%20image%2020241118102655.png)
 
 实际上能过的代码，新版本应该不使用这个导入了
 ```jsp
@@ -751,16 +751,16 @@ public class AntiSamyController {
 
 > [!error] 
 > 又出现了，答完题没过
-> ![[../images/Pasted image 20241119103021.png]]
+> ![](../images/Pasted%20image%2020241119103021.png)
 > 按之前的操作搞一下
 >  首先重启docker `sudo docker restart bd81a8dd1ea8`
 >  之后登录进去 `sudo docker exec -it bd81a8dd1ea8 /bin/bash`
 >  修改sql文件  `vim ~/.webgoat-2023.8/webgoat.script`
->  ![[../images/Pasted image 20241119103520.png]]
->  ![[../images/Pasted image 20241119103538.png]]
+>  ![](../images/Pasted%20image%2020241119103520.png)
+>  ![](../images/Pasted%20image%2020241119103538.png)
 >  问题应该在这里，这节课应该是20，前面的64~69没有solved
 >  添加后保存，然后重启docker
->  ![[../images/Pasted image 20241119103757.png]]
+>  ![](../images/Pasted%20image%2020241119103757.png)
 >  OK！
 
 路径注入因为比较简单，在上一篇
@@ -770,7 +770,7 @@ public class AntiSamyController {
 ### 4.1 简单XXE
 
 抓包一个普通的评论，可以看到内容是xml
-![[../images/Pasted image 20241125171936.png]]
+![](../images/Pasted%20image%2020241125171936.png)
 
 大概是修改这个xml内容，让它把我们想看到的东西打印出来
 
@@ -794,9 +794,9 @@ XML 元素使用`<author>&js;</author>   <comment>  <text>1111</text></comment>`
 
 这个是输出`/etc/passwd`文件，虽然不是题目但是直接过了
 
-![[../images/Pasted image 20241125171919.png]]
+![](../images/Pasted%20image%2020241125171919.png)
 效果：
-![[../images/Pasted image 20241125172347.png]]
+![](../images/Pasted%20image%2020241125172347.png)
 
 虽然这时候过了，但是不是题目要求的根目录，改了一下
 
@@ -808,15 +808,15 @@ XML 元素使用`<author>&js;</author>   <comment>  <text>1111</text></comment>`
   <text>&xxe;</text></comment>
 ```
 
-![[../images/Pasted image 20241125172525.png]]
+![](../images/Pasted%20image%2020241125172525.png)
 
 ### 4.2 json改xml
 
 抓包发的是
-![[../images/Pasted image 20241125173435.png]]
+![](../images/Pasted%20image%2020241125173435.png)
 
 实际上xml也可以发
-![[../images/Pasted image 20241125173456.png]]
+![](../images/Pasted%20image%2020241125173456.png)
 
 ### 4.3 盲XXE
 
@@ -827,21 +827,21 @@ XML 元素使用`<author>&js;</author>   <comment>  <text>1111</text></comment>`
 这个dtd文件也应该是一个链接
 肯定要先上传文件但，这个WebWolf有问题
 
-![[../images/Pasted image 20241126160920.png]]
+![](../images/Pasted%20image%2020241126160920.png)
 
 搜了一下
 https://github.com/WebGoat/WebGoat/issues/1473
 有点像，但这个问题没被解决啊，只好自己看看了
 
 定位到文件要被上传到webwolf.fileserver.location里
-![[../images/Pasted image 20241126161532.png]]
+![](../images/Pasted%20image%2020241126161532.png)
 去查配置文件
-![[../images/Pasted image 20241126161600.png]]
+![](../images/Pasted%20image%2020241126161600.png)
 是在/tmp下面，于是去docker里翻翻
 发现/tmp/webwolf-fileserver下面竟然有一个我的用户名的文件，这怎么看都应该是个目录
 删掉文件，改成目录后，就好了！
-![[../images/Pasted image 20241126160842.png]]
-![[../images/Pasted image 20241126161733.png]]
+![](../images/Pasted%20image%2020241126160842.png)
+![](../images/Pasted%20image%2020241126161733.png)
 
 这个地方卡住了，一开始没理解
 原来不是把secret.txt文件上传上去，是利用这个landing请求拼接出一个url
@@ -861,9 +861,9 @@ xml如下
   <text>&send;</text></comment>
 ```
 访问看到我直接卸载dtd里的url
-![[../images/Pasted image 20241126184315.png]]
+![](../images/Pasted%20image%2020241126184315.png)
 评论需要随便写一条才会刷新
-![[../images/Pasted image 20241126184636.png]]
+![](../images/Pasted%20image%2020241126184636.png)
 
 然后就是让%file拼接在url后面访问
 
@@ -900,7 +900,7 @@ end
 ```
 
 最后看到的
-![[../images/Pasted image 20241127090220.png]]
+![](../images/Pasted%20image%2020241127090220.png)
 
 用url解码`WebGoat 8.0 rocks... (XJvTsSxmYh)`
 再评论上去

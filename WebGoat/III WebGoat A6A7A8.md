@@ -7,7 +7,7 @@
 大概就是1.12会弹出这个提示，但是？这个我的输入有什么关系吗？
 不理解
 
-![[../images/Pasted image 20241203110555.png]]
+![](../images/Pasted%20image%2020241203110555.png)
 
 ### 1.2 CVE-2013-7285 (XStream)
 
@@ -15,7 +15,7 @@
 
 先随便试试，大概之后要修改xml来干点什么？
 
-![[../images/Pasted image 20241203111629.png]]
+![](../images/Pasted%20image%2020241203111629.png)
 
 > 看到了似乎有用的
 > https://loli.fj.cn/2024/04/25/CVE-2013-7285%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/#%E5%AE%8C%E6%88%90
@@ -40,7 +40,7 @@
 
 直接贴上去看看
 
-![[../images/Pasted image 20241203113529.png]]
+![](../images/Pasted%20image%2020241203113529.png)
 
 试图用java自己搞一个环境
 一直在报错！
@@ -145,13 +145,13 @@ System.out.println("Email: " + contact.getEmail());
 我理解大概是本来应该转换出一个Contact出来，Poc的xml则是转成了一个 com.sun.proxy动态代理
 当动态代理的接口Contact调用时则触发handle，那如果注册的接口是其他的呢
 
-![[../images/Pasted image 20241204103737.png]]
+![](../images/Pasted%20image%2020241204103737.png)
 
 很可惜，就算把监听接口改成其他的，这个转换出来的类直接无法给contact，不仅无法使用Contact的函数了，并且后续也无法触发了
-![[../images/Pasted image 20241204104855.png]]
+![](../images/Pasted%20image%2020241204104855.png)
 
 如果换成ContactImpl也一样无法触发
-![[../images/Pasted image 20241204115346.png]]
+![](../images/Pasted%20image%2020241204115346.png)
 
 也就是接受返回的必须是一个接口，并且监听的必须是这个接口，才能赋值成功
 
@@ -199,7 +199,7 @@ xstream.ignoreUnknownElements(); // 忽略未知元素
 System.out.println(xstream.toXML(student0));
 ```
 输出
-![[../images/Pasted image 20241204113731.png]]
+![](../images/Pasted%20image%2020241204113731.png)
 
 
 大概理解？这里的Student实际上也是Proxy，当Student调用任何函数时，就会触发Main里定义的handler，无论如何都会输出一遍method，并根据method输出morning
@@ -213,7 +213,7 @@ System.out.println(xstream.toXML(student0));
 这种增强功能通常在 AOP（面向切面编程）中使用，动态代理是实现 AOP 的一种常见方式。
 
 而这个漏洞实际上是利用了Proxy的反序列化，搞出来一个这样类，赋值给监听的接口，于是后续该接口调用函数时就会触发漏洞
-![[../images/Pasted image 20241204135444.png]]
+![](../images/Pasted%20image%2020241204135444.png)
 
 至于网上使用`<sorted-set>`这样的写法是方便写这个触发的接口
 让类不用赋值出去，在fromXml的调用链里就进行了比较，直接就能触发
@@ -221,7 +221,7 @@ System.out.println(xstream.toXML(student0));
 > 
 > 搜到的很好的参考 https://blog.csdn.net/Xxy605/article/details/126297121
 > 一看id竟然还是认识的
-> ![[../images/Pasted image 20241204105018.png]]
+> ![](../images/Pasted%20image%2020241204105018.png)
 
 #### 1.2.4 答案
 
@@ -252,15 +252,15 @@ System.out.println(xstream.toXML(student0));
 #### 2.1 修改参数绕过
 
 看起来把参数删了就可以
-![[../images/Pasted image 20241204141511.png]]
+![](../images/Pasted%20image%2020241204141511.png)
 
 但并不行，提示说和讲的案例不一样
-![[../images/Pasted image 20241204143214.png]]
+![](../images/Pasted%20image%2020241204143214.png)
 
 一开始换参数名不知道为什么没过
 总之去看了源码，自己写了一下试试，原理就是这样
 包含secQuestion就会被放进去
-![[../images/Pasted image 20241204143757.png]]
+![](../images/Pasted%20image%2020241204143757.png)
 
 ```java
 public class Main {  
@@ -295,22 +295,22 @@ public class Main {
 ```
 
 
-![[../images/Pasted image 20241204143157.png]]
+![](../images/Pasted%20image%2020241204143157.png)
 这样也行
-![[../images/Pasted image 20241204143931.png]]
+![](../images/Pasted%20image%2020241204143931.png)
 
 ### 2.2 抓包看账号密码
 
 就是抓个包看账号密码
-![[../images/Pasted image 20241204144547.png]]
+![](../images/Pasted%20image%2020241204144547.png)
 
 ### 2.3 JWT令牌
 
 > [!note] 
 > 可以安装burp的JWT Editor插件
-> ![[../images/Pasted image 20241210165746.png]]
+> ![](../images/Pasted%20image%2020241210165746.png)
 
-![[../images/Pasted image 20241204151941.png]]
+![](../images/Pasted%20image%2020241204151941.png)
 对每段解码，直接就能获得用户名
 
 #### 2.3.1 解析jwt
@@ -330,7 +330,7 @@ eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MzQxMjI0NTQsImFkbWluIjoiZmFsc2UiLCJ1c2VyIjoiSmV
 ```
 
 中间的直接转会报错，问了gpt，让我补位`==`，就可以了。谢谢gpt
-![[../images/Pasted image 20241204153708.png]]
+![](../images/Pasted%20image%2020241204153708.png)
 
 头是一样的
 `eyJpYXQiOjE3MzQxMjI0NTQsImFkbWluIjoiZmFsc2UiLCJ1c2VyIjoiSmVycnkifQ==`对应
@@ -341,17 +341,17 @@ eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MzQxMjI0NTQsImFkbWluIjoiZmFsc2UiLCJ1c2VyIjoiSmV
 ```
 eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MzQxMjI0NTQsImFkbWluIjoidHJ1ZSIsInVzZXIiOiJKZXJyeSJ9Cg.5UMXheXVy0dGaDEuWHGAyF0Vw8X6cqDlkaIC8v67QsyJbtJ_eASH0Pdf-lzsv48aU9wrFiiOuWwBjjMWCtw7qw
 ```
-![[../images/Pasted image 20241204154232.png]]
+![](../images/Pasted%20image%2020241204154232.png)
 
 直接就显示OK，但是并没有变化emmmmm
 哦哦原来要点那个删除的按钮，这回可以看到token格式不对了
-![[../images/Pasted image 20241204154728.png]]
+![](../images/Pasted%20image%2020241204154728.png)
 
 #### 2.3.2 改签名：算法None
 
 接下来要改签名，直接搜没看到什么暴力破解
 倒是有算法改none的
-![[../images/Pasted image 20241204163724.png]]
+![](../images/Pasted%20image%2020241204163724.png)
 
 使用从`base64.b64encode(b'{"alg":"none"}')` 转换的`eyJhbGciOiJub25lIn0`，以及改后的中间部分
 
@@ -373,7 +373,7 @@ jwtdecoder(secret_key, token)
 ```
 
 这个是可以解出来的，但是，发包过去并不行
-![[../images/Pasted image 20241204163935.png]]
+![](../images/Pasted%20image%2020241204163935.png)
 看来还是要爆破出来密钥？
 
 补充：后面看了题解其实这个应该可以的，应该是我没有加.所以说格式不对
@@ -383,7 +383,7 @@ jwtdecoder(secret_key, token)
 #### 2.3.3 爆破密码
 
 想到之前用hashcat爆破hash ，于是问gpt命令，gpt说对了一半，但告诉我要用:分隔，于是得到了这样的报错
-![[../images/Pasted image 20241204165652.png]]
+![](../images/Pasted%20image%2020241204165652.png)
 
 > 应该使用的参考：
 > hashcat支持的所有模式 https://hashcat.net/forum/thread-9854.html
@@ -395,16 +395,16 @@ hashcat -m 16500 -a 0 eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MzQxMjI0NTQsImFkbWluIjoiZ
 
 很快就出来了密钥
 
-![[../images/Pasted image 20241204165716.png]]
+![](../images/Pasted%20image%2020241204165716.png)
 
 #### 2.3.4 最新时间戳
 
 这次
 
-![[../images/Pasted image 20241204174655.png]]
+![](../images/Pasted%20image%2020241204174655.png)
 
 原来是时间戳的问题
-![[../images/Pasted image 20241204175200.png]]
+![](../images/Pasted%20image%2020241204175200.png)
 
 再次测试的时候又server error了，这次是因为中间段多了\n
 
@@ -477,7 +477,7 @@ print(token)
 
 再生成一段算法为None的看看，也是可以的
 （其实这个才是这道题的标准题解）
-![[../images/Pasted image 20241204191606.png]]
+![](../images/Pasted%20image%2020241204191606.png)
 
 ### 2.4 问答
 
@@ -486,7 +486,7 @@ print(token)
 这个问答题在旧版本没有
 只好自己找题了
 
-![[../images/Pasted image 20241204194832.png]]
+![](../images/Pasted%20image%2020241204194832.png)
 
 构造一下包的内容
 
@@ -504,12 +504,12 @@ Solution+3%3A+Logs+an+error+in+line+9
 ```
 
 
-![[../images/Pasted image 20241204195557.png]]
+![](../images/Pasted%20image%2020241204195557.png)
 看起来没问题，还可以马上发包看一下结果
 
 经过测试这个是有变化的！很好
-![[../images/Pasted image 20241204200428.png]]
-![[../images/Pasted image 20241204200615.png]]
+![](../images/Pasted%20image%2020241204200428.png)
+![](../images/Pasted%20image%2020241204200615.png)
 
 可以做题了
 根据题目两个代码块的区别是
@@ -520,7 +520,7 @@ Solution+3%3A+Logs+an+error+in+line+9
 
 第一题选报错，第2题选正确调用
 ok
-![[../images/Pasted image 20241204200738.png]]
+![](../images/Pasted%20image%2020241204200738.png)
 
 ### 2.5 JWT令牌破解
 
@@ -534,7 +534,7 @@ eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJXZWJHb2F0IFRva2VuIEJ1aWxkZXIiLCJhdWQiOiJ3ZWJnb2F
 刚刚就爆破了密码，这次还是和上一次一样
 
 看一下令牌信息
-![[../images/Pasted image 20241205101702.png]]
+![](../images/Pasted%20image%2020241205101702.png)
 
 使用的是HS256，信息需要改用户名为webgoat
 
@@ -548,12 +548,12 @@ eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJXZWJHb2F0IFRva2VuIEJ1aWxkZXIiLCJhdWQiOiJ3ZWJnb2F
 hashcat -m 16500 -a 0 eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJXZWJHb2F0IFRva2VuIEJ1aWxkZXIiLCJhdWQiOiJ3ZWJnb2F0Lm9yZyIsImlhdCI6MTczMzI3MjY5NCwiZXhwIjoxNzMzMjcyNzU0LCJzdWIiOiJ0b21Ad2ViZ29hdC5vcmciLCJ1c2VybmFtZSI6IlRvbSIsIkVtYWlsIjoidG9tQHdlYmdvYXQub3JnIiwiUm9sZSI6WyJNYW5hZ2VyIiwiUHJvamVjdCBBZG1pbmlzdHJhdG9yIl19.h1puAT9Q6Suwip5l1Z8XBDTTFXg-G97CCmpR8aH3r9U /usr/share/wordlists/rockyou.txt
 ```
 
-![[../images/Pasted image 20241205101954.png]]
+![](../images/Pasted%20image%2020241205101954.png)
 
 密钥是`washington`
 
 解出来的jwt还是要求时间戳
-![[../images/Pasted image 20241205102624.png]]
+![](../images/Pasted%20image%2020241205102624.png)
 
 修改一下时间戳iat和过期时间exp就可以了
 
@@ -594,7 +594,7 @@ print(token)
 
 #### 2.6.1 基本信息
 
-![[../images/Pasted image 20241205103250.png]]
+![](../images/Pasted%20image%2020241205103250.png)
 
 漏洞的介绍大概是，访问令牌过期用刷新令牌刷新，但是刷新时没有校验这两个令牌是否属于同一个人
 于是出现了用测试刷新令牌刷新实际用户的过期访问令牌，拿到了实际用户最新的访问令牌
@@ -621,7 +621,7 @@ eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE1MjYxMzE0MTEsImV4cCI6MTUyNjIxNzgxMSwiYWRtaW4iOiJ
 也许我可以拿我的刷新令牌，刷新这个Tom的令牌，然后用Tom的新令牌干事情
 
 刷新了一下页面，抓到了一个jerry的登录包
-![[../images/Pasted image 20241205104429.png]]
+![](../images/Pasted%20image%2020241205104429.png)
 
 刷新令牌是
 ```
@@ -629,39 +629,39 @@ NDcaPxlpQdAkoSArYKgA
 ```
 
 试一下checkout用Tom旧令牌
-![[../images/Pasted image 20241205104947.png]]
+![](../images/Pasted%20image%2020241205104947.png)
 
 看来是在login刷新？
 每次login，刷新令牌似乎都会变
-![[../images/Pasted image 20241205105121.png]]
+![](../images/Pasted%20image%2020241205105121.png)
 试一下
 好像返回的还是Jerry的
-![[../images/Pasted image 20241205105236.png]]
+![](../images/Pasted%20image%2020241205105236.png)
 
 看不懂了，这也没有其他接口了啊
 
 #### 2.6.2 newToken接口
 
 看了一下源码
-![[../images/Pasted image 20241205110313.png]]
+![](../images/Pasted%20image%2020241205110313.png)
 
 看起来有戏
-![[../images/Pasted image 20241205110549.png]]
+![](../images/Pasted%20image%2020241205110549.png)
 
 需要最新的刷新令牌和登录状态
-![[../images/Pasted image 20241205110700.png]]
+![](../images/Pasted%20image%2020241205110700.png)
 
 试试Tom的登录
 返回了新的令牌
-![[../images/Pasted image 20241205110819.png]]
+![](../images/Pasted%20image%2020241205110819.png)
 
 用这个令牌去checkout，就ok了
-![[../images/Pasted image 20241205110854.png]]
+![](../images/Pasted%20image%2020241205110854.png)
 
 #### 2.6.3 如果用密钥
 
 去看了题解，竟然没有用刷新令牌？好吧，让我去看看能不能爆破出来密钥
-![[../images/Pasted image 20241205111021.png]]
+![](../images/Pasted%20image%2020241205111021.png)
 
 
 ```shell
@@ -671,12 +671,12 @@ hashcat -m 16500 -a 0 eyJhbGciOiJIUzUxMiJ9.eyJhZG1pbiI6ImZhbHNlIiwidXNlciI6IlRvb
 这个爆破不出来
 
 于是去看了源码，把这个加在了字典文件里
-![[../images/Pasted image 20241205140111.png]]
+![](../images/Pasted%20image%2020241205140111.png)
 
 结果发现还是不行，自己写的python跑出来的Token签名也不一样
 调了好久发现，这个密钥是Base64加密的
 之前的用法是
-![[../images/Pasted image 20241205140318.png]]
+![](../images/Pasted%20image%2020241205140318.png)
 
 也就是java的API传入的就是base64加密的密钥
 
@@ -701,16 +701,16 @@ String token1 = Jwts.builder()
 echo "bm5n3SkxCX4kKRy4" | base64 --decode >> /usr/share/wordlists/rockyou.txt
 ```
 
-![[../images/Pasted image 20241205140646.png]]
+![](../images/Pasted%20image%2020241205140646.png)
 
 ### 2.7 删除Tom的账户
 
 #### 2.7.1 正确的接口
 
-![[../images/Pasted image 20241205141615.png]]
+![](../images/Pasted%20image%2020241205141615.png)
 
 无论点哪个delete都是
-![[../images/Pasted image 20241205141632.png]]
+![](../images/Pasted%20image%2020241205141632.png)
 
 那么分析一下Token
 
@@ -731,38 +731,38 @@ eyJ0eXAiOiJKV1QiLCJqa3UiOiJodHRwczovL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3Mu
 
 > 路径是不正确的
 > https://github.com/WebGoat/WebGoat/issues/1715
-> ![[../images/Pasted image 20241205145731.png]]
+> ![](../images/Pasted%20image%2020241205145731.png)
 > 怎么看都应该是POST /WebGoat/JWT/jku/delete
 
 #### 2.7.2 创造一个jku
 
 但是这里还有问题
-![[../images/Pasted image 20241205145758.png]]
+![](../images/Pasted%20image%2020241205145758.png)
 
 直接访问 https://cognito-idp.us-east-1.amazonaws.com/webgoat/.well-known/jwks.json 会提示
-![[../images/Pasted image 20241205145828.png]]
+![](../images/Pasted%20image%2020241205145828.png)
 
 gpt解释这个用户池ID不对
-![[../images/Pasted image 20241205145924.png]]
+![](../images/Pasted%20image%2020241205145924.png)
 
 但是加了下划线还是有问题
-![[../images/Pasted image 20241205145953.png]]
+![](../images/Pasted%20image%2020241205145953.png)
 
 理解一下大概是AWS Cognito提供一个免费的jku的生成
 但是AWS的注册竟然还要我填信用卡太离谱了（
 总之没研究出来怎么快速使用这个
-![[../images/Pasted image 20241210164447.png]]
+![](../images/Pasted%20image%2020241210164447.png)
 
 于是想到换一个这样的服务器
 正好搜到了类似的靶场参考
 https://blog.csdn.net/2401_84166147/article/details/137851539
 感谢这个参考！还让我安装了burp的Jwt插件！太好用了
 总之这里用了靶场自带的一个地址生成
-![[../images/Pasted image 20241210164835.png]]
+![](../images/Pasted%20image%2020241210164835.png)
 但是，这个网址是外网，我的虚拟机访问不了
 不过我知道了jku返回包的格式，于是我可以自己构建的一个
 用插件生成一个RSA key
-![[../images/Pasted image 20241210165028.png]]
+![](../images/Pasted%20image%2020241210165028.png)
 
 直接开启tomcat服务器，在目录下创建一个test.json
 ```json
@@ -782,8 +782,8 @@ https://blog.csdn.net/2401_84166147/article/details/137851539
 
 直接在这里改然后签名，就可以发送了
 需要改jku和iat,exp时间
-![[../images/Pasted image 20241210164134.png]]
+![](../images/Pasted%20image%2020241210164134.png)
 
 username改成Tom就通关了！
 这个插件太好了，我要补充在前面
-![[../images/Pasted image 20241210165546.png]]
+![](../images/Pasted%20image%2020241210165546.png)

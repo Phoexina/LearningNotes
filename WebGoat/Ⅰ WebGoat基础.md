@@ -165,7 +165,7 @@ burpsuit也能看到
 
 > [!error] 
 > 很好，新版本打不开了这个问题了
-> ![[../images/Pasted image 20241112110303.png]]
+> ![](../images/Pasted%20image%2020241112110303.png)
 > 看来一下源码
 > 应该是完全在webgoat的内容，但网上什么都搜不到
 > 我不理解（） 
@@ -174,22 +174,22 @@ burpsuit也能看到
 但是红点不变绿太痛苦了
 利用一下旧版本试试能不能通关
 旧版本抓包
-![[../images/Pasted image 20241112111119.png]]
+![](../images/Pasted%20image%2020241112111119.png)
 
 很好很粗暴，没想到POST放的是全字符串
 转发，记得改右上角的地址端口
-![[../images/Pasted image 20241112111808.png]]
+![](../images/Pasted%20image%2020241112111808.png)
 
 重新搞一个正确的包用
-![[../images/Pasted image 20241112112109.png]]
-![[../images/Pasted image 20241112112118.png]]
+![](../images/Pasted%20image%2020241112112109.png)
+![](../images/Pasted%20image%2020241112112118.png)
 OK！
 #### 2.1.7 新课程的sample attack
 
-![[../images/Pasted image 20241112110358.png]]
+![](../images/Pasted%20image%2020241112110358.png)
 
 可以翻源码
-![[../images/Pasted image 20241112110423.png]]
+![](../images/Pasted%20image%2020241112110423.png)
 
 只要第一个参数匹配这个`secr37Value`，第二个参数随意
 
@@ -198,15 +198,15 @@ OK！
 
 > [!note] 
 > 在新版本这个居然变成A2了 
-> ![[../images/Pasted image 20241114104425.png]]
+> ![](../images/Pasted%20image%2020241114104425.png)
 > 等一下！好像题目不一样（）
 ### 3.1 base64
 
 ![](../images/2024-11-05-15-16-05-image.png)
 
 上面是旧版本，新版是
-![[../images/Pasted image 20241114104652.png]]
-![[../images/Pasted image 20241114104723.png]]
+![](../images/Pasted%20image%2020241114104652.png)
+![](../images/Pasted%20image%2020241114104723.png)
 
 ### 3.2 xor加密
 
@@ -283,7 +283,7 @@ hashcat -m 0 -a 0 5EBE2294ECD0E0F08EAB7690D2A6EE69 /usr/share/wordlists/rockyou.
 | 400  | SHA-256 (Unix) |     |         |
 | 500  | SHA-512 (Unix) |     |         |
 如果报告显示是已经查询过的密码，需要在命令后面加`--show`展示
-![[../images/Pasted image 20241114105430.png]]
+![](../images/Pasted%20image%2020241114105430.png)
 （这也新版本的题目答案啦~）
 
 问了一下gpt，SHA-256 (Unix) 和 SHA256 之间的主要区别确实在于盐的使用和存储格式。
@@ -343,7 +343,7 @@ openssl base64 -A可以让输出不换行
 ![](../images/2024-11-05-16-50-14-image.png)
 
 新版本密钥
-![[../images/Pasted image 20241114105904.png]]
+![](../images/Pasted%20image%2020241114105904.png)
 步骤同上
 
 ### 3.5 docker找密钥
@@ -374,7 +374,7 @@ echo "U2FsdGVkX199jgh5oANElFdtCxIEvdEvciLi+v+5loE+VCuy6Ii0b+5byb5DXp32RPmT02Ek1p
 > [!note] 
 > 新版本的在A3
 > 
-> ![[../images/Pasted image 20241114110401.png]] 
+> ![](../images/Pasted%20image%2020241114110401.png) 
 ### 4.1 SQL基础语句
 
 > 只有写对了才能看到结果
@@ -461,59 +461,59 @@ GRANT SELECT ON grant_rights TO unauthorized_user;
 ### 4.4 简单路径注入
 
 这里的题，但感觉很简单，放到这里写了
-![[../images/Pasted image 20241111161846.png]]
+![](../images/Pasted%20image%2020241111161846.png)
 
-![[../images/Pasted image 20241111161920.png]]
+![](../images/Pasted%20image%2020241111161920.png)
 随便上传一个文件，告诉我上传到这里了
 于是可以上传到上一级目录
-![[../images/Pasted image 20241111155420.png]]
+![](../images/Pasted%20image%2020241111155420.png)
 以为test是文件夹，其实是test文件那就直接文件名咯
-![[../images/Pasted image 20241111155609.png]]
+![](../images/Pasted%20image%2020241111155609.png)
 上传到`../test`，test可以替换成任意文件名
 
 下一题说删除了`../`
 测试一下`../`，发现路径显示的就是删去这段的内容，试试双写就过了，`....//test`
-![[../images/Pasted image 20241111160043.png]]
+![](../images/Pasted%20image%2020241111160043.png)
 
 ### 3.4 抓包的路径注入
 
-![[../images/Pasted image 20241111161939.png]]
+![](../images/Pasted%20image%2020241111161939.png)
 上传的路径直接就是我的文件名
 抓个包
-![[../images/Pasted image 20241111160730.png]]
+![](../images/Pasted%20image%2020241111160730.png)
 很朴素，一个包就包括了我的文件内容，直接再发一次，得到同样的结果
 那就把名字改成`../info.txt`，OK
 
 下一题是猫猫图片
 抓个包，发现那个`Location: /PathTraversal/random-picture?id=1.jpg`
-![[../images/Pasted image 20241111161658.png]]
+![](../images/Pasted%20image%2020241111161658.png)
 感觉有用
 拿来自己当参数用一下，发现回显是两个jpg，看来会自动加后缀
-![[../images/Pasted image 20241111162101.png]]
+![](../images/Pasted%20image%2020241111162101.png)
 
 去掉后缀试一下，拿到指定图片了
-![[../images/Pasted image 20241111162155.png]]
+![](../images/Pasted%20image%2020241111162155.png)
 
 ../会报`Illegal characters are not allowed in the query params`
 把../完全改为url编码可以绕过
 > [!note] 
 > 转换参考：
-> ![[../images/Pasted image 20241111163544.png]] 
+> ![](../images/Pasted%20image%2020241111163544.png) 
 
 可以利用报错的输出列表找目标图片
-![[../images/Pasted image 20241111163431.png]]
+![](../images/Pasted%20image%2020241111163431.png)
 在上两级的目录里
-![[../images/Pasted image 20241111163656.png]]
+![](../images/Pasted%20image%2020241111163656.png)
 
 > [!warning] 
 > 这里可能有一个检查
 > 不完整的字符串就搜的到
-> ![[../images/Pasted image 20241111164014.png]] 
+> ![](../images/Pasted%20image%2020241111164014.png) 
 > 完整的字符串直接返回了bad
-> ![[../images/Pasted image 20241111164104.png]]
+> ![](../images/Pasted%20image%2020241111164104.png)
 > 一开始被骗了（）以为id只能输入数字
 
-![[../images/Pasted image 20241111164214.png]]
+![](../images/Pasted%20image%2020241111164214.png)
 
 去kali上跑一下命令
 
@@ -524,31 +524,31 @@ echo -n "testtest0" | sha512sum
 ### 3.5 zip的路径注入
 
 随便压缩一个zip就说我完成了？？？
-![[../images/Pasted image 20241111165304.png]]
+![](../images/Pasted%20image%2020241111165304.png)
 
 思考了一下可能是我之前就是这个文件，它直接给我替换了？
 目录是这里，我换个名字压缩看看
-![[../images/Pasted image 20241111165546.png]]
+![](../images/Pasted%20image%2020241111165546.png)
 
 又是直接替换了，不同名字为什么会替换
-![[../images/Pasted image 20241111165716.png]]
+![](../images/Pasted%20image%2020241111165716.png)
 
 > [!important] 
 >  找到了
 >  https://github.com/WebGoat/WebGoat/issues/1103 
 >  这里有一个2023年的更新，我使用和wolf联合版的不是最新的！！！
->  ![[../images/Pasted image 20241111173946.png]]
+>  ![](../images/Pasted%20image%2020241111173946.png)
 >  
 
 竟然有这么多变化xxxxxxx震惊！有点离谱我要重写了bushi
-![[../images/Pasted image 20241111174036.png]]
+![](../images/Pasted%20image%2020241111174036.png)
 
 新版本！
 
 其实就是构造一个路径的zip，下一篇就可以直接用
 
 探索一下，上传的profile.zip其实在这里，这确实很难从路径慢慢找的
-![[../images/Pasted image 20241121162436.png]]
+![](../images/Pasted%20image%2020241121162436.png)
 
 也就是zip只需要 `../../home/webgoat/.webgoat-2023.8/PathTraversal/testtest/testtest.jpg` 就可以了
 题目中为了准确进行了好几次../，不过感觉差不多就不重新试了
